@@ -7,14 +7,12 @@ import { Layout } from '@/components/layout/Layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { 
-  BookOpen, 
   Clock, 
   Users, 
   Star, 
   Play, 
   CheckCircle,
   Award,
-  Globe,
   Download,
   Share2,
 } from 'lucide-react'
@@ -85,7 +83,7 @@ export default function CourseDetail() {
   const params = useParams()
   const courseId = params.id as string
   
-  const [course, setCourse] = useState<any>(null)
+  const [course, setCourse] = useState<typeof courseData[1] | null>(null)
   const [isEnrolling, setIsEnrolling] = useState(false)
 
   useEffect(() => {
@@ -104,7 +102,9 @@ export default function CourseDetail() {
     setIsEnrolling(true)
     // Simulate API call
     setTimeout(() => {
-      setCourse({ ...course, enrolled: true })
+      if (course) {
+        setCourse({ ...course, enrolled: true })
+      }
       setIsEnrolling(false)
       router.push(`/student/course/${courseId}/learn`)
     }, 1500)
@@ -125,9 +125,9 @@ export default function CourseDetail() {
 
   if (!session) return null
 
-  const totalLessons = course.curriculum.reduce((acc: number, section: any) => acc + section.lessons.length, 0)
-  const totalDuration = course.curriculum.reduce((acc: number, section: any) => 
-    acc + section.lessons.reduce((sectionAcc: number, lesson: any) => 
+  const totalLessons = course.curriculum.reduce((acc: number, section) => acc + section.lessons.length, 0)
+  const totalDuration = course.curriculum.reduce((acc: number, section) => 
+    acc + section.lessons.reduce((sectionAcc: number, lesson) => 
       sectionAcc + parseInt(lesson.duration), 0), 0)
 
   return (
@@ -172,11 +172,13 @@ export default function CourseDetail() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-4">
-                  <img 
-                    src={course.instructor.avatar} 
-                    alt={course.instructor.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
+                  <div className="w-16 h-16 rounded-full overflow-hidden">
+                    <img 
+                      src={course.instructor.avatar} 
+                      alt={course.instructor.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div>
                     <h3 className="font-semibold text-lg">{course.instructor.name}</h3>
                     <p className="text-gray-600">{course.instructor.bio}</p>
@@ -188,7 +190,7 @@ export default function CourseDetail() {
             {/* Course Features */}
             <Card>
               <CardHeader>
-                <CardTitle>What you'll get</CardTitle>
+                <CardTitle>What you&apos;ll get</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -207,11 +209,13 @@ export default function CourseDetail() {
           <div className="space-y-6">
             <Card className="sticky top-24">
               <div className="relative">
-                <img 
-                  src={course.image} 
-                  alt={course.title}
-                  className="w-full h-48 object-cover rounded-t-xl"
-                />
+                <div className="w-full h-48 overflow-hidden rounded-t-xl">
+                  <img 
+                    src={course.image} 
+                    alt={course.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-xl">
                   <Play className="h-16 w-16 text-white" />
                 </div>
@@ -301,7 +305,7 @@ export default function CourseDetail() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {course.curriculum.map((section: any, sectionIndex: number) => (
+              {course.curriculum.map((section, sectionIndex: number) => (
                 <div key={sectionIndex} className="border rounded-lg">
                   <div className="p-4 bg-gray-50 border-b">
                     <h3 className="font-semibold text-lg">{section.title}</h3>
@@ -310,7 +314,7 @@ export default function CourseDetail() {
                     </p>
                   </div>
                   <div className="divide-y">
-                    {section.lessons.map((lesson: any, lessonIndex: number) => (
+                    {section.lessons.map((lesson, lessonIndex: number) => (
                       <div key={lessonIndex} className="p-4 flex items-center justify-between hover:bg-gray-50">
                         <div className="flex items-center space-x-3">
                           <Play className="h-4 w-4 text-gray-400" />

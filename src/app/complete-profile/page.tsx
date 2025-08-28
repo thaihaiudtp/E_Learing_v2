@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { User, Calendar, Phone, MapPin } from 'lucide-react'
 
 export default function CompleteProfile() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const [formData, setFormData] = useState({
     fullname: '',
@@ -24,7 +24,11 @@ export default function CompleteProfile() {
       router.push('/login')
     }
   }, [status, router])
-
+  useEffect(() => {
+    if(session?.user?.isValid){
+      router.push('/student/dashboard')
+    }
+  }, [session, router])
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -65,7 +69,19 @@ export default function CompleteProfile() {
       })
 
       if (response.ok) {
-        router.push('/student/dashboard?message=Profile completed successfully!')
+        // Update session to reflect the new isValid status
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            isValid: true
+          }
+        });
+        
+        // Small delay to ensure session is updated
+        setTimeout(() => {
+          router.push('/student/dashboard?message=Profile completed successfully!')
+        }, 300);
       } else {
         const data = await response.json()
         setError(data.message || 'Failed to update profile')

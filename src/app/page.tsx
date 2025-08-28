@@ -1,7 +1,7 @@
 'use client'
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { 
   GraduationCap, 
   BookOpen, 
@@ -99,7 +99,7 @@ export default function Home() {
               <span className="text-blue-600"> Limits</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Discover thousands of courses from expert instructors and advance your career with practical skills that matter in today's world.
+              Discover thousands of courses from expert instructors and advance your career with practical skills that matter in today&apos;s world.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/register">
@@ -190,7 +190,7 @@ export default function Home() {
                       <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
+                  <p className="text-gray-600 mb-4">&ldquo;{testimonial.content}&rdquo;</p>
                   <div>
                     <div className="font-semibold text-gray-900">{testimonial.name}</div>
                     <div className="text-sm text-gray-500">{testimonial.role}</div>

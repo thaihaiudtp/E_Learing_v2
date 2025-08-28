@@ -1,6 +1,7 @@
 import { UserService } from "@/service/UserService";
 import { ResponseDTO } from "@/dto/ResponseDTO";
 import { checkSession } from "@/lib/check-session";
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -44,11 +45,11 @@ export async function GET(
             message: 'User profile retrieved successfully'
         };
         return new Response(JSON.stringify(response), { status: 200 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         const response: ResponseDTO = {
         status: 500,
         message: 'Failed to retrieve user profile',
-        error: error.message
+        error: error instanceof Error ? error.message : 'Unknown error'
         };
         return new Response(JSON.stringify(response), { status: 500 });
     }
@@ -60,9 +61,17 @@ export async function PUT(
 ) {
   try {
     const { id } = params;
-    const body = await request.json();
-    
-    const updatedUser = await UserService.updateUser(parseInt(id), body);
+    const {fullname, phone, age, avatar} = await request.json();
+    if(!fullname){
+      return new Response(JSON.stringify({ message: 'Full name is required' }), { status: 400 });
+    }
+    const updatedUser = await UserService.updateUser(parseInt(id), { 
+      fullname, 
+      phone: phone || null, 
+      age: age || null, 
+      avatar: avatar || null,
+      isValid: true // Set to true when completing profile
+    });
     
     const response: ResponseDTO = {
       status: 200,
@@ -70,11 +79,11 @@ export async function PUT(
       message: 'User profile updated successfully'
     };
     return new Response(JSON.stringify(response), { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     const response: ResponseDTO = {
       status: 500,
       message: 'Failed to update user profile',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     };
     return new Response(JSON.stringify(response), { status: 500 });
   }
@@ -94,11 +103,11 @@ export async function DELETE(
       message: 'User deleted successfully'
     };
     return new Response(JSON.stringify(response), { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     const response: ResponseDTO = {
       status: 500,
       message: 'Failed to delete user',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     };
     return new Response(JSON.stringify(response), { status: 500 });
   }

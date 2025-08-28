@@ -1,6 +1,6 @@
-export interface ResponseDTO {
+export interface ResponseDTO<T = unknown> {
     status: number;
-    data?: any;
+    data?: T | null;
     error?: string;
     message?: string;
 }

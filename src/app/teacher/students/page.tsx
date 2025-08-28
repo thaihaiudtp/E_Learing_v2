@@ -15,7 +15,6 @@ import {
   MoreVertical,
   TrendingUp,
   BookOpen,
-  Clock,
   Award
 } from 'lucide-react'
 
@@ -70,9 +69,9 @@ const mockStudents = [
 export default function TeacherStudents() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [students, setStudents] = useState(mockStudents)
+  const [students] = useState(mockStudents)
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedStudent, setSelectedStudent] = useState<any>(null)
+  const [selectedStudent, setSelectedStudent] = useState<typeof mockStudents[0] | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -112,7 +111,7 @@ export default function TeacherStudents() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Student Management</h1>
-            <p className="text-gray-600 mt-2">Track and manage your students' progress</p>
+            <p className="text-gray-600 mt-2">Track and manage your students&apos; progress</p>
           </div>
           <div className="flex space-x-2">
             <Button variant="outline">
@@ -206,7 +205,7 @@ export default function TeacherStudents() {
           <CardHeader>
             <CardTitle>Students ({filteredStudents.length})</CardTitle>
             <CardDescription>
-              Manage and track your students' learning progress
+              Manage and track your students&apos; learning progress
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -217,11 +216,13 @@ export default function TeacherStudents() {
                   className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center space-x-4">
-                    <img
-                      src={student.avatar}
-                      alt={student.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
+                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                      <img
+                        src={student.avatar}
+                        alt={student.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{student.name}</h3>
                       <p className="text-sm text-gray-600">{student.email}</p>
@@ -291,11 +292,13 @@ export default function TeacherStudents() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div className="flex items-center space-x-4">
-                    <img
-                      src={selectedStudent.avatar}
-                      alt={selectedStudent.name}
-                      className="w-16 h-16 rounded-full object-cover"
-                    />
+                    <div className="w-16 h-16 rounded-full overflow-hidden">
+                      <img
+                        src={selectedStudent.avatar}
+                        alt={selectedStudent.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div>
                       <CardTitle>{selectedStudent.name}</CardTitle>
                       <CardDescription>{selectedStudent.email}</CardDescription>
@@ -329,7 +332,7 @@ export default function TeacherStudents() {
                 <div>
                   <h3 className="font-semibold mb-4">Course Progress</h3>
                   <div className="space-y-3">
-                    {selectedStudent.courses.map((course: any, index: number) => (
+                    {selectedStudent.courses.map((course, index: number) => (
                       <div key={index} className="flex items-center justify-between">
                         <span className="text-sm font-medium">{course.name}</span>
                         <div className="flex items-center space-x-2">

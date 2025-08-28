@@ -15,17 +15,14 @@ export async function GET(request: Request) {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         const response: ResponseDTO = {
-            status: 500,
-            message: 'Failed to retrieve users',
-            error: error.message
-        }
-        return new Response(JSON.stringify(response), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
+        status: 500,
+        message: 'Failed',
+        error: error instanceof Error ? error.message : 'Unknown error'
+        };
+    return new Response(JSON.stringify(response), { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -67,16 +64,13 @@ export async function POST(request: Request) {
             status: 201,
             headers: { 'Content-Type': 'application/json' }
         });
-    } catch (error: any) {
-        const response: ResponseDTO = {
-            status: 500,
-            message: 'Failed to create user',
-            error: error.message
-        }
-        return new Response(JSON.stringify(response), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
+    } catch (error: unknown) {
+    const response: ResponseDTO = {
+      status: 500,
+      message: 'Failed to create user',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+    return new Response(JSON.stringify(response), { status: 500 });
+  }
 }
 

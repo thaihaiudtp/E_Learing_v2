@@ -90,7 +90,7 @@ export default function CreateTeacherProfile() {
         const data = await response.json()
         setError(data.message || 'Failed to create teacher profile')
       }
-    } catch (error) {
+    } catch {
       setError('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)
@@ -209,7 +209,7 @@ export default function CreateTeacherProfile() {
                 <h3 className="font-medium text-blue-900 mb-2">What happens next?</h3>
                 <ul className="text-sm text-blue-700 space-y-1">
                   <li>• Your profile will be reviewed by our team</li>
-                  <li>• You'll get access to course creation tools</li>
+                  <li>• You&apos;ll get access to course creation tools</li>
                   <li>• Start creating and publishing courses</li>
                   <li>• Earn money from student enrollments</li>
                 </ul>
