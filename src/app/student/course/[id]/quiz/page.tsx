@@ -88,7 +88,7 @@ export default function QuizPage() {
   }, [status, router])
 
   useEffect(() => {
-    const quizInfo = quizData[courseId as keyof typeof quizData]
+    const quizInfo = quizData[Number(courseId) as keyof typeof quizData]
     setQuiz(quizInfo)
     if (quizInfo) {
       setTimeLeft(quizInfo.timeLimit * 60) // Convert to seconds

@@ -16,7 +16,7 @@ import {
   Award,
   Globe,
   Download,
-  Share2
+  Share2,
 } from 'lucide-react'
 
 // Mock course data - in real app, this would come from API
@@ -96,7 +96,7 @@ export default function CourseDetail() {
 
   useEffect(() => {
     // In real app, fetch course data from API
-    const courseInfo = courseData[courseId as keyof typeof courseData]
+    const courseInfo = courseData[Number(courseId) as keyof typeof courseData]
     setCourse(courseInfo)
   }, [courseId])
 
@@ -109,7 +109,10 @@ export default function CourseDetail() {
       router.push(`/student/course/${courseId}/learn`)
     }, 1500)
   }
-
+  const handleDoQuiz = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    router.push(`/student/course/${courseId}/quiz`);
+  }
   if (status === 'loading' || !course) {
     return (
       <Layout>
@@ -257,7 +260,11 @@ export default function CourseDetail() {
                     Save
                   </Button>
                 </div>
-                
+                <div className='space-y-3 pt-4 border-t w-full'>
+                  <Button variant="outline" size="sm" className="w-full" onClick={handleDoQuiz}>
+                    Quiz
+                  </Button>
+                </div>
                 <div className="space-y-3 pt-4 border-t">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Duration:</span>

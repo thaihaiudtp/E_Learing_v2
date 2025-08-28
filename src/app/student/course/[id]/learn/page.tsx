@@ -67,12 +67,11 @@ export default function LearnPage() {
   }, [status, router])
 
   useEffect(() => {
-    const courseInfo = courseContent[courseId as keyof typeof courseContent]
+    const courseInfo = courseContent[Number(courseId) as keyof typeof courseContent]
     setCourse(courseInfo)
   }, [courseId])
 
   const handleLessonComplete = () => {
-    // Mark current lesson as completed and move to next
     if (course) {
       const updatedLessons = course.lessons.map((lesson: any) => 
         lesson.current ? { ...lesson, completed: true, current: false } : lesson

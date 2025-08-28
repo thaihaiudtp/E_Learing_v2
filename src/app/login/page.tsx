@@ -1,6 +1,6 @@
 'use client'
 
-import { signIn, getSession } from 'next-auth/react'
+import { signIn,useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
@@ -18,7 +18,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-
+  const {data: session} = useSession();
+  useEffect(() => {
+    if (session) {
+      router.push('/student/dashboard')
+    }
+  }, [session, router])
   useEffect(() => {
     const urlMessage = searchParams.get('message')
     if (urlMessage) {

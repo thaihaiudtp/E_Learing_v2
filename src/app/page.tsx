@@ -1,3 +1,4 @@
+'use client'
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -11,7 +12,9 @@ import {
   CheckCircle,
   ArrowRight
 } from "lucide-react";
-
+import { useRouter } from 'next/navigation'
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 export default function Home() {
   const features = [
     {
@@ -56,7 +59,13 @@ export default function Home() {
       rating: 5
     }
   ];
-
+  const {data: session } = useSession();
+  const router = useRouter()
+  useEffect(() => {
+    if(session){
+      router.push('/student/dashboard')
+    }
+  }, [session, router])
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}

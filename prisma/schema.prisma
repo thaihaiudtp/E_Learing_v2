@@ -13,6 +13,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum QuizType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -20,6 +45,275 @@ model User {
   password  String?  // Optional for Google users
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  fullname  String?
+  avatar    String?
+  phone     String?
+  age       Int?
+  role      Role     @default(STUDENT)
+  isValid   Boolean  @default(false)
+  
+  // Relations
+  teacherProfile    TeacherProfile?
+  enrollments       Enrollment[]
+  quizAttempts      QuizAttempt[]
+  lessonProgress    LessonProgress[]
+  courseReviews     CourseReview[]
+  
   @@map("users")
+}
+
+model TeacherProfile {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  bio         String?
+  experience  String?
+  skills      String[] // Array of skills
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courses     Course[]
+  
+  @@map("teacher_profiles")
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  courses     Course[]
+  
+  @@map("categories")
+}
+
+model Course {
+  id            Int           @id @default(autoincrement())
+  title         String
+  description   String
+  slug          String        @unique
+  thumbnail     String?
+  price         Decimal       @default(0)
+  level         CourseLevel   @default(BEGINNER)
+  status        CourseStatus  @default(DRAFT)
+  duration      String?       // e.g., "8 weeks"
+  language      String        @default("English")
+  requirements  String[]      // Array of requirements
+  features      String[]      // Array of features
+  lastUpdated   DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Foreign Keys
+  teacherId     Int
+  categoryId    Int
+  
+  // Relations
+  teacher       TeacherProfile @relation(fields: [teacherId], references: [id])
+  category      Category       @relation(fields: [categoryId], references: [id])
+  sections      CourseSection[]
+  enrollments   Enrollment[]
+  reviews       CourseReview[]
+  quizzes       Quiz[]
+  
+  @@map("courses")
+}
+
+model CourseSection {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  order       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Foreign Keys
+  courseId    Int
+  
+  // Relations
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+  
+  @@map("course_sections")
+}
+
+model Lesson {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String?
+  videoUrl      String?
+  duration      String?  // e.g., "15:30"
+  order         Int
+  isFree        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Foreign Keys
+  sectionId     Int
+  
+  // Relations
+  section       CourseSection    @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  resources     LessonResource[]
+  progress      LessonProgress[]
+  
+  @@map("lessons")
+}
+
+model LessonResource {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String   // pdf, zip, url, etc.
+  url         String
+  size        String?  // e.g., "2.3 MB"
+  createdAt   DateTime @default(now())
+  
+  // Foreign Keys
+  lessonId    Int
+  
+  // Relations
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  @@map("lesson_resources")
+}
+
+model Enrollment {
+  id            Int      @id @default(autoincrement())
+  enrolledAt    DateTime @default(now())
+  completedAt   DateTime?
+  progress      Float    @default(0) // 0-100
+  
+  // Foreign Keys
+  userId        Int
+  courseId      Int
+  
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id            Int      @id @default(autoincrement())
+  completed     Boolean  @default(false)
+  watchedAt     DateTime?
+  watchTime     Int      @default(0) // seconds watched
+  
+  // Foreign Keys
+  userId        Int
+  lessonId      Int
+  
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+}
+
+model Quiz {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String?
+  timeLimit     Int?     // minutes
+  passingScore  Int      @default(70) // percentage
+  maxAttempts   Int      @default(3)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Foreign Keys
+  courseId      Int
+  
+  // Relations
+  course        Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions     QuizQuestion[]
+  attempts      QuizAttempt[]
+  
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id            Int      @id @default(autoincrement())
+  question      String
+  type          QuizType @default(MULTIPLE_CHOICE)
+  options       String[] // Array of options for multiple choice
+  correctAnswer String   // Index for multiple choice, text for others
+  explanation   String?
+  points        Int      @default(1)
+  order         Int
+  createdAt     DateTime @default(now())
+  
+  // Foreign Keys
+  quizId        Int
+  
+  // Relations
+  quiz          Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers       QuizAnswer[]
+  
+  @@map("quiz_questions")
+}
+
+model QuizAttempt {
+  id            Int      @id @default(autoincrement())
+  score         Float    @default(0) // percentage
+  totalQuestions Int
+  correctAnswers Int     @default(0)
+  timeSpent     Int?     // seconds
+  completedAt   DateTime @default(now())
+  passed        Boolean  @default(false)
+  
+  // Foreign Keys
+  userId        Int
+  quizId        Int
+  
+  // Relations
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz          Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers       QuizAnswer[]
+  
+  @@map("quiz_attempts")
+}
+
+model QuizAnswer {
+  id            Int      @id @default(autoincrement())
+  answer        String   // User's answer
+  isCorrect     Boolean  @default(false)
+  
+  // Foreign Keys
+  attemptId     Int
+  questionId    Int
+  
+  // Relations
+  attempt       QuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question      QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  @@unique([attemptId, questionId])
+  @@map("quiz_answers")
+}
+
+model CourseReview {
+  id          Int      @id @default(autoincrement())
+  rating      Int      // 1-5 stars
+  comment     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Foreign Keys
+  userId      Int
+  courseId    Int
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+  @@map("course_reviews")
 }
