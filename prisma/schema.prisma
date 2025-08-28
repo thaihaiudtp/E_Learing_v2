@@ -115,18 +115,16 @@ model Course {
   price         Decimal       @default(0)
   level         CourseLevel   @default(BEGINNER)
   status        CourseStatus  @default(DRAFT)
-  duration      String?       // e.g., "8 weeks"
+  duration      String?       
   language      String        @default("English")
-  requirements  String[]      // Array of requirements
-  features      String[]      // Array of features
   lastUpdated   DateTime      @default(now())
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  
+
   // Foreign Keys
   teacherId     Int
   categoryId    Int
-  
+
   // Relations
   teacher       TeacherProfile @relation(fields: [teacherId], references: [id])
   category      Category       @relation(fields: [categoryId], references: [id])
@@ -134,9 +132,30 @@ model Course {
   enrollments   Enrollment[]
   reviews       CourseReview[]
   quizzes       Quiz[]
-  
+  requirements  CourseRequirement[]
+  features      CourseFeature[]
+
   @@map("courses")
 }
+
+model CourseRequirement {
+  id       Int     @id @default(autoincrement())
+  text     String
+  courseId Int
+  course   Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("course_requirements")
+}
+
+model CourseFeature {
+  id       Int     @id @default(autoincrement())
+  text     String
+  courseId Int
+  course   Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("course_features")
+}
+
 
 model CourseSection {
   id          Int      @id @default(autoincrement())
