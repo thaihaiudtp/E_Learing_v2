@@ -2,20 +2,19 @@ import { UserService } from "@/service/UserService";
 import { ResponseDTO } from "@/dto/ResponseDTO";
 import { checkSession } from "@/lib/check-session";
 
-type RouteContext = {
-  params: { id: string }
-}
+
+
 
 export async function GET(
   request: Request,
-  context: RouteContext 
+  { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await checkSession();
     if(!session) {
         return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
     }
     try {
-        const { id } = context.params; // ← Lấy id từ URL
+        const id = (await params).id; // ← Lấy id từ URL
         const requestId = parseInt(id);
         const currentUser = await UserService.findUserByEmail(session.user.email!);
         if (!currentUser) {
@@ -61,10 +60,11 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  context: RouteContext 
+  { params }: { params: Promise<{ id: string }> }
+
 ) {
   try {
-    const { id } = context.params;
+    const id = (await params).id;
     const {fullname, phone, age, avatar} = await request.json();
     if(!fullname){
       return new Response(JSON.stringify({ message: 'Full name is required' }), { status: 400 });
@@ -95,10 +95,11 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  context: RouteContext
+  { params }: { params: Promise<{ id: string }> }
+
 ) {
   try {
-    const { id } = context.params;
+    const id = (await params).id;
 
     await UserService.deleteUser(parseInt(id));
     

@@ -2,7 +2,7 @@ import { UserService } from "@/service/UserService";
 import { UserRequest } from "@/dto/user/UserRequest";
 import { ResponseDTO } from "@/dto/ResponseDTO";
 
-export async function GET(request: Request) {
+export async function GET() {
     try {
         const users = await UserService.findAllUsers();
 

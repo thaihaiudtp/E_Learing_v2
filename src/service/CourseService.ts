@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import { CourseLevel, CourseStatus } from '@prisma/client'
 import { CourseRequest } from '@/dto/course/CourseRequset'
 export class CourseService {
   static async createCourse(data: CourseRequest) {
@@ -14,9 +13,7 @@ export class CourseService {
         level: data.level || 'BEGINNER',
         thumbnail: data.thumbnail,
         duration: data.duration,
-        language: data.language || 'English',
-        requirements: data.requirements || [],
-        features: data.features || [],
+        language: data.language || 'English'
       },
       include: {
         teacher: {

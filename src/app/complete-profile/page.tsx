@@ -88,6 +88,7 @@ export default function CompleteProfile() {
       }
     } catch (error) {
       setError('An error occurred. Please try again.')
+      console.error(error)
     } finally {
       setIsLoading(false)
     }

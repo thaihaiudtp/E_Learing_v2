@@ -23,11 +23,11 @@ export function Navbar() {
     { href: '/student/my-courses', label: 'My Courses', icon: GraduationCap },
   ]
 
-  const teacherNavItems = [
-    { href: '/teacher/courses', label: 'Course Management', icon: BookOpen },
-    { href: '/teacher/students', label: 'Student Management', icon: User },
-    { href: '/teacher/tests', label: 'Test Management', icon: Settings },
-  ]
+  // const teacherNavItems = [
+  //   { href: '/teacher/courses', label: 'Course Management', icon: BookOpen },
+  //   { href: '/teacher/students', label: 'Student Management', icon: User },
+  //   { href: '/teacher/tests', label: 'Test Management', icon: Settings },
+  // ]
 
   const navItems = session?.user ? studentNavItems : []
 

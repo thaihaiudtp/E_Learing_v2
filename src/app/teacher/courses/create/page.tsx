@@ -116,7 +116,7 @@ export default function CreateCourse() {
       })
 
       if (response.ok) {
-        const data = await response.json()
+        await response.json()
         router.push(`/teacher/courses?message=Course "${formData.title}" created successfully!`)
       } else {
         const data = await response.json()
@@ -124,6 +124,7 @@ export default function CreateCourse() {
       }
     } catch (error) {
       setError('An error occurred. Please try again.')
+      console.error(error)
     } finally {
       setIsLoading(false)
     }
