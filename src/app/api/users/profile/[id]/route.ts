@@ -11,7 +11,7 @@ export async function GET(
         return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
     }
     try {
-        const { id } = await params; // ← Lấy id từ URL
+        const { id } = params; // ← Lấy id từ URL
         const requestId = parseInt(id);
         const currentUser = await UserService.findUserByEmail(session.user.email!);
         if (!currentUser) {

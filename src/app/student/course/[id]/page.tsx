@@ -176,7 +176,9 @@ export default function CourseDetail() {
                     <Image
                       src={course.instructor.avatar} 
                       alt={course.instructor.name}
-                      className="w-full h-full object-cover"
+                      width={64}
+                      height={64}
+                      className="object-cover"
                     />
                   </div>
                   <div>
@@ -213,7 +215,9 @@ export default function CourseDetail() {
                   <Image
                     src={course.image} 
                     alt={course.title}
-                    className="w-full h-full object-cover"
+                    width={400}
+                    height={192}
+                    className="object-cover w-full h-full"
                   />
                 </div>
                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-xl">

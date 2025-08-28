@@ -139,7 +139,9 @@ export default function StudentDashboard() {
                   <Image 
                     src={course.image} 
                     alt={course.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    width={300}
+                    height={200}
+                    className="object-cover group-hover:scale-105 transition-transform duration-300 w-full h-48"
                   />
                   <div className="absolute top-4 left-4">
                     <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">

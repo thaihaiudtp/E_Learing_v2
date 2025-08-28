@@ -118,11 +118,15 @@ export default function MyCourses() {
               {inProgressCourses.map((course) => (
                 <Card key={course.id} className="hover:shadow-lg transition-shadow">
                   <div className="flex">
-                    <Image
-                      src={course.image} 
-                      alt={course.title}
-                      className="w-32 h-32 object-cover rounded-l-xl"
-                    />
+                    <div className="w-48 h-32 overflow-hidden rounded-l-xl flex-shrink-0">
+                      <Image
+                        src={course.image} 
+                        alt={course.title}
+                        width={192}
+                        height={128}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
                     <div className="flex-1 p-6">
                       <CardHeader className="p-0 mb-4">
                         <CardTitle className="text-lg">{course.title}</CardTitle>
@@ -175,11 +179,15 @@ export default function MyCourses() {
               {completedCourses.map((course) => (
                 <Card key={course.id} className="hover:shadow-lg transition-shadow">
                   <div className="relative">
-                    <Image
-                      src={course.image} 
-                      alt={course.title}
-                      className="w-full h-48 object-cover rounded-t-xl"
-                    />
+                    <div className="w-full h-48 overflow-hidden rounded-t-xl">
+                      <Image
+                        src={course.image} 
+                        alt={course.title}
+                        width={300}
+                        height={192}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
                     <div className="absolute top-4 right-4">
                       <CheckCircle className="h-8 w-8 text-green-600 bg-white rounded-full p-1" />
                     </div>

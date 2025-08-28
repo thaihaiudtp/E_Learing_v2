@@ -31,6 +31,7 @@ export const authOptions: AuthOptions = {
           id: user.id.toString(),
           name: user.name,
           email: user.email,
+          role: user.role,
           isValid: user.isValid,
         }
       },
@@ -53,6 +54,7 @@ export const authOptions: AuthOptions = {
         token.id = user.id
         token.name = user.name
         token.email = user.email
+        token.role = user.role
         token.isValid = user.isValid
       } else if (trigger === "update" && session?.user) {
         if (session.user.isValid !== undefined) {
@@ -76,6 +78,7 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string
         session.user.name = token.name as string
         session.user.email = token.email as string
+        session.user.role = token.role as string
         session.user.isValid = token.isValid as boolean
       }
       return session
@@ -99,9 +102,11 @@ export const authOptions: AuthOptions = {
 
             user.id = newUser.id.toString()
             user.isValid = false
+            user.role = newUser.role
           } else {
             user.id = existingUser.id.toString()
             user.isValid = existingUser.isValid
+            user.role = existingUser.role
           }
           return true
         } catch (error) {

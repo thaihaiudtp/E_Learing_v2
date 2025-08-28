@@ -220,7 +220,9 @@ export default function TeacherStudents() {
                       <Image
                         src={student.avatar}
                         alt={student.name}
-                        className="w-full h-full object-cover"
+                        width={48}
+                        height={48}
+                        className="object-cover"
                       />
                     </div>
                     <div>
@@ -296,7 +298,9 @@ export default function TeacherStudents() {
                       <Image
                         src={selectedStudent.avatar}
                         alt={selectedStudent.name}
-                        className="w-full h-full object-cover"
+                        width={64}
+                        height={64}
+                        className="object-cover"
                       />
                     </div>
                     <div>
