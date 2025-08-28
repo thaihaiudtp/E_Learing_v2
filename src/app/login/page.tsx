@@ -1,3 +1,4 @@
+
 'use client'
 
 import { signIn,useSession } from 'next-auth/react'
@@ -178,4 +179,6 @@ export default function LoginPage() {
       </div>
     </div>
   )
+
+
 }
