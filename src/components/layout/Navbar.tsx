@@ -6,11 +6,9 @@ import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/Button'
 import { 
   BookOpen, 
-  User, 
   Menu, 
   X, 
   GraduationCap,
-  Settings,
   LogOut
 } from 'lucide-react'
 

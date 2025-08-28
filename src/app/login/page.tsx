@@ -26,7 +26,7 @@ function LoginForm() {
       console.log(session);
       router.push('/student/dashboard')
     }
-  }, [status, router])
+  }, [status, router, session])
 
   useEffect(() => {
     const urlMessage = searchParams.get('message')

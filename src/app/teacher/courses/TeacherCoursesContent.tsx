@@ -9,7 +9,7 @@ import {
   BookOpen, Plus, Users, Eye, Edit, Trash2, MoreVertical, 
   TrendingUp, DollarSign, Clock 
 } from 'lucide-react'
-
+import Image from 'next/image'
 interface Course {
   id: number
   title: string
@@ -196,10 +196,12 @@ export default function TeacherCoursesContent() {
               {courses.map((course) => (
                 <Card key={course.id} className="hover:shadow-lg transition-shadow">
                   <div className="flex">
-                    <img
+                    <Image
                       src={course.thumbnail}
                       alt={course.title}
-                      className="w-32 h-32 object-cover rounded-l-xl"
+                      width={32}
+                      height={32}
+                      className=" object-cover rounded-l-xl"
                     />
                     <div className="flex-1 p-6">
                       <div className="flex justify-between items-start mb-2">
