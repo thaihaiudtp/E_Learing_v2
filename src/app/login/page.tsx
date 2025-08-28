@@ -143,11 +143,34 @@ function LoginForm() {
             <button
               type="button"
               onClick={() => signIn('google', { callbackUrl: '/student/dashboard' })}
-              className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full flex justify-center items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
+              <svg
+                className="w-5 h-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 48 48"
+              >
+                <path
+                  fill="#EA4335"
+                  d="M24 9.5c3.94 0 6.6 1.7 8.1 3.1l5.9-5.9C34.9 3.6 29.9 1.5 24 1.5 14.7 1.5 7 8.2 7 17.5c0 2.7.7 5.3 2 7.5l6.5-5c-1.1-3.3 1.3-6.5 4.5-7.5 1.3-.4 2.7-.5 4-.5z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M46.1 24.5c0-1.5-.1-2.6-.3-3.8H24v7.1h12.6c-.6 3.3-2.5 6.1-5.3 8l6.5 5c3.8-3.6 6-8.8 6-16.3z"
+                />
+                <path
+                  fill="#4A90E2"
+                  d="M24 46c6.5 0 11.9-2.1 15.8-5.6l-6.5-5c-2.2 1.5-5 2.5-9.3 2.5-7.1 0-13.1-4.8-15.2-11.3l-6.6 5.1C6.7 40.2 14.6 46 24 46z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M8.7 28.2C8.2 26.8 8 25.2 8 23.5s.2-3.3.7-4.7l-6.6-5.1C.7 17.2 0 20.2 0 23.5c0 3.3.7 6.3 2.1 9.2l6.6-4.5z"
+                />
+              </svg>
               Google
             </button>
           </div>
+
         </div>
 
         <div className="mt-6 text-center">
