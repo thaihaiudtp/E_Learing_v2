@@ -21,6 +21,8 @@ export default function LoginPage() {
   const {data: session} = useSession();
   useEffect(() => {
     if (session) {
+      // Check if user profile is complete
+      // For now, redirect to student dashboard - you can add profile validation logic here
       router.push('/student/dashboard')
     }
   }, [session, router])

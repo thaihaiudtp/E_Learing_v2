@@ -53,7 +53,7 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (response.ok) {
-        router.push('/login?message=Registration successful! Please login.')
+        router.push('/login?message=Registration successful! Please login to complete your profile.')
       } else {
         setError(data.message || 'Registration failed')
       }
