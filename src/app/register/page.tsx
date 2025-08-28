@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { GraduationCap, Eye, EyeOff } from 'lucide-react'
-import { signIn, getSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
@@ -57,7 +57,7 @@ export default function RegisterPage() {
       } else {
         setError(data.message || 'Registration failed')
       }
-    } catch (error) {
+    } catch {
       setError('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)

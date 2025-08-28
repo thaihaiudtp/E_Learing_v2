@@ -72,7 +72,7 @@ export default function QuizPage() {
   const params = useParams()
   const courseId = params.id as string
   
-  const [quiz, setQuiz] = useState<any>(null)
+  const [quiz, setQuiz] = useState<typeof quizData[1] | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<{ [key: number]: number }>({})
   const [timeLeft, setTimeLeft] = useState(0)
@@ -123,7 +123,7 @@ export default function QuizPage() {
   }
 
   const handleNextQuestion = () => {
-    if (currentQuestion < quiz.questions.length - 1) {
+    if (quiz && currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(prev => prev + 1)
     }
   }
@@ -135,8 +135,10 @@ export default function QuizPage() {
   }
 
   const handleSubmitQuiz = () => {
+    if (!quiz) return
+    
     let correctAnswers = 0
-    quiz.questions.forEach((question: any) => {
+    quiz.questions.forEach((question) => {
       if (answers[question.id] === question.correctAnswer) {
         correctAnswers++
       }
@@ -255,7 +257,7 @@ export default function QuizPage() {
                   {score}%
                 </div>
                 <div className="text-gray-600">
-                  {quiz.questions.filter((_: any, index: number) => 
+                  {quiz.questions.filter((_, index: number) => 
                     answers[quiz.questions[index].id] === quiz.questions[index].correctAnswer
                   ).length} out of {quiz.questions.length} correct
                 </div>
@@ -409,7 +411,7 @@ export default function QuizPage() {
         <Card className="mt-6">
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-2">
-              {quiz.questions.map((_: any, index: number) => (
+              {quiz.questions.map((_, index: number) => (
                 <button
                   key={index}
                   onClick={() => setCurrentQuestion(index)}

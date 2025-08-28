@@ -4,15 +4,8 @@ import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Card, CardContent } from '@/components/ui/Card'
 import { 
   Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  Volume2, 
-  Settings,
-  Maximize,
   CheckCircle,
   BookOpen,
   FileText,
@@ -55,8 +48,7 @@ export default function LearnPage() {
   const params = useParams()
   const courseId = params.id as string
   
-  const [course, setCourse] = useState<any>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [course, setCourse] = useState<typeof courseContent[1] | null>(null)
   const [showSidebar, setShowSidebar] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
 
@@ -73,11 +65,11 @@ export default function LearnPage() {
 
   const handleLessonComplete = () => {
     if (course) {
-      const updatedLessons = course.lessons.map((lesson: any) => 
+      const updatedLessons = course.lessons.map((lesson) => 
         lesson.current ? { ...lesson, completed: true, current: false } : lesson
       )
       
-      const currentIndex = course.lessons.findIndex((lesson: any) => lesson.current)
+      const currentIndex = course.lessons.findIndex((lesson) => lesson.current)
       if (currentIndex < course.lessons.length - 1) {
         updatedLessons[currentIndex + 1].current = true
       }
@@ -88,7 +80,7 @@ export default function LearnPage() {
 
   const handleLessonSelect = (lessonId: number) => {
     if (course) {
-      const updatedLessons = course.lessons.map((lesson: any) => ({
+      const updatedLessons = course.lessons.map((lesson) => ({
         ...lesson,
         current: lesson.id === lessonId
       }))
@@ -123,13 +115,13 @@ export default function LearnPage() {
             </Button>
           </div>
           <div className="text-sm text-gray-600">
-            {course.lessons.filter((l: any) => l.completed).length} of {course.lessons.length} lessons completed
+            {course.lessons.filter((l) => l.completed).length} of {course.lessons.length} lessons completed
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
             <div 
               className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{ 
-                width: `${(course.lessons.filter((l: any) => l.completed).length / course.lessons.length) * 100}%` 
+                width: `${(course.lessons.filter((l) => l.completed).length / course.lessons.length) * 100}%` 
               }}
             ></div>
           </div>
@@ -137,7 +129,7 @@ export default function LearnPage() {
         
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {course.lessons.map((lesson: any, index: number) => (
+            {course.lessons.map((lesson, index: number) => (
               <div
                 key={lesson.id}
                 className={`p-3 rounded-lg cursor-pointer transition-colors ${
@@ -290,7 +282,7 @@ export default function LearnPage() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Downloadable Resources</h3>
                   <div className="space-y-3">
-                    {course.currentLesson.resources.map((resource: any, index: number) => (
+                    {course.currentLesson.resources.map((resource, index: number) => (
                       <div key={index} className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
                         <div className="flex items-center space-x-3">
                           <FileText className="h-5 w-5 text-gray-400" />
