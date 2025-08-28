@@ -1,5 +1,5 @@
 'use client'
-
+import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -217,7 +217,7 @@ export default function TeacherStudents() {
                 >
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-full overflow-hidden">
-                      <img
+                      <Image
                         src={student.avatar}
                         alt={student.name}
                         className="w-full h-full object-cover"
@@ -293,7 +293,7 @@ export default function TeacherStudents() {
                 <div className="flex justify-between items-start">
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 rounded-full overflow-hidden">
-                      <img
+                      <Image
                         src={selectedStudent.avatar}
                         alt={selectedStudent.name}
                         className="w-full h-full object-cover"

@@ -1,5 +1,5 @@
 'use client'
-
+import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -136,7 +136,7 @@ export default function StudentDashboard() {
             {featuredCourses.map((course) => (
               <Card key={course.id} className="group cursor-pointer hover:shadow-lg transition-all duration-300">
                 <div className="relative overflow-hidden rounded-t-xl">
-                  <img 
+                  <Image 
                     src={course.image} 
                     alt={course.title}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"

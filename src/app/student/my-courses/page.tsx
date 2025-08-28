@@ -1,12 +1,12 @@
 'use client'
-
+import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Layout } from '@/components/layout/Layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { BookOpen, Clock, CheckCircle, Play, BarChart3 } from 'lucide-react'
+import { BookOpen, CheckCircle, Play, BarChart3 } from 'lucide-react'
 
 const enrolledCourses = [
   {
@@ -118,7 +118,7 @@ export default function MyCourses() {
               {inProgressCourses.map((course) => (
                 <Card key={course.id} className="hover:shadow-lg transition-shadow">
                   <div className="flex">
-                    <img 
+                    <Image
                       src={course.image} 
                       alt={course.title}
                       className="w-32 h-32 object-cover rounded-l-xl"
@@ -175,7 +175,7 @@ export default function MyCourses() {
               {completedCourses.map((course) => (
                 <Card key={course.id} className="hover:shadow-lg transition-shadow">
                   <div className="relative">
-                    <img 
+                    <Image
                       src={course.image} 
                       alt={course.title}
                       className="w-full h-48 object-cover rounded-t-xl"

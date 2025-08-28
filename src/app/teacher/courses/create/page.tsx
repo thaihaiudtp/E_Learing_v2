@@ -8,12 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { 
   BookOpen, 
-  Upload, 
   Plus, 
   X, 
   ChevronLeft,
   Save,
-  Eye
 } from 'lucide-react'
 
 const categories = [

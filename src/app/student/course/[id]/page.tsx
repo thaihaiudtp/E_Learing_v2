@@ -1,5 +1,5 @@
 'use client'
-
+import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -173,7 +173,7 @@ export default function CourseDetail() {
               <CardContent>
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 rounded-full overflow-hidden">
-                    <img 
+                    <Image
                       src={course.instructor.avatar} 
                       alt={course.instructor.name}
                       className="w-full h-full object-cover"
@@ -210,7 +210,7 @@ export default function CourseDetail() {
             <Card className="sticky top-24">
               <div className="relative">
                 <div className="w-full h-48 overflow-hidden rounded-t-xl">
-                  <img 
+                  <Image
                     src={course.image} 
                     alt={course.title}
                     className="w-full h-full object-cover"
