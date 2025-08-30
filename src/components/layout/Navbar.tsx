@@ -45,7 +45,7 @@ export function Navbar() {
   const navItems = session?.user ? studentNavItems : []
 
   const avatarMenuItems = [
-    { href: '/setting', label: 'Profile Settings', icon: User },
+    { href: '/setting', label: 'Account Settings', icon: User },
   ]
 
   return (
