@@ -55,7 +55,7 @@ StudentSchema.pre<IStudent>('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
     return next();
   } catch (err) {
-    return next(err as any);
+    return next(err as unknown as Error );
   }
 });
 
