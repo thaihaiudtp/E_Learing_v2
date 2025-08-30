@@ -9,7 +9,7 @@ import { GraduationCap, Eye, EyeOff } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -38,13 +38,13 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch('/api/users', {
+      const response = await fetch('/api/student', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
+          full_name: formData.full_name,
           email: formData.email,
           password: formData.password,
         }),
@@ -99,8 +99,8 @@ export default function RegisterPage() {
                 </label>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="full_name"
+                  value={formData.full_name}
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Enter your full name"

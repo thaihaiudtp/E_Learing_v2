@@ -1,10 +1,7 @@
-import { UserService } from "@/service/UserService";
+import { Student } from "@/model/students";
+import connectDB from "@/lib/db";
 import { ResponseDTO } from "@/dto/ResponseDTO";
 import { checkSession } from "@/lib/check-session";
-
-
-
-
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -13,10 +10,10 @@ export async function GET(
     if(!session) {
         return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
     }
+    await connectDB();
     try {
         const id = (await params).id; // ← Lấy id từ URL
-        const requestId = parseInt(id);
-        const currentUser = await UserService.findUserByEmail(session.user.email!);
+        const currentUser = await Student.findOne({ email: session.user.email! });
         if (!currentUser) {
             const response: ResponseDTO = {
                     status: 401,
@@ -24,16 +21,16 @@ export async function GET(
             };
             return new Response(JSON.stringify(response), { status: 401 });
         }
-        if (currentUser.id !== requestId) {
+        if (currentUser.id !== id) {
             const response: ResponseDTO = {
                 status: 403,
                 message: 'Forbidden - You can only access your own profile'
             };
             return new Response(JSON.stringify(response), { status: 403 });
         }
-        
-        const user = await UserService.findUserById(requestId);
-        
+
+        const user = await Student.findOne({ _id: id });
+
         if (!user) {
         const response: ResponseDTO = {
             status: 404,
@@ -63,19 +60,24 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 
 ) {
+ 
   try {
+    await connectDB();
     const id = (await params).id;
     const {fullname, phone, age, avatar} = await request.json();
     if(!fullname){
       return new Response(JSON.stringify({ message: 'Full name is required' }), { status: 400 });
     }
-    const updatedUser = await UserService.updateUser(parseInt(id), { 
-      fullname, 
-      phone: phone || null, 
-      age: age || null, 
-      avatar: avatar || null,
-      isValid: true // Set to true when completing profile
-    });
+    const updatedUser = await Student.findOneAndUpdate(
+      { _id: id },
+      {
+        fullname,
+        phone: phone || null,
+        age: age || null,
+        avatar: avatar || null,
+      },
+      { new: true }
+    );
     
     const response: ResponseDTO = {
       status: 200,
@@ -99,10 +101,11 @@ export async function DELETE(
 
 ) {
   try {
+    await connectDB();
     const id = (await params).id;
 
-    await UserService.deleteUser(parseInt(id));
-    
+    await Student.findOneAndDelete({ _id: id });
+
     const response: ResponseDTO = {
       status: 200,
       message: 'User deleted successfully'

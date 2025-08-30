@@ -6,8 +6,6 @@ declare module "next-auth" {
       id: string
       name: string
       email: string
-      isValid: boolean
-      role: string
     } & DefaultSession["user"]
   }
 
@@ -15,8 +13,6 @@ declare module "next-auth" {
     id: string
     name: string
     email: string
-    role: string
-    isValid: boolean
   }
 }
 
@@ -25,7 +21,5 @@ declare module "next-auth/jwt" {
     id: string
     name: string
     email: string
-    role: string
-    isValid: boolean
   }
 }

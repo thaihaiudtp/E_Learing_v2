@@ -2,10 +2,8 @@
 import { AuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
-import { prisma } from "@/lib/prisma"
-import { compare } from "bcrypt"
-import { userData } from "@/types/type"
-
+import connectDB from "./db"
+import { Student } from "@/model/students"
 export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
@@ -19,20 +17,19 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const user = await prisma.user.findUnique({
-          where: { email: credentials?.email },
-        })
+        await connectDB();
+        const user = await Student.findOne({ email: credentials?.email });
+        console.log("Found user:", user); // Debugging line
         if (!user || !user.password) return null
 
-        const valid = await compare(credentials!.password, user.password)
+        const valid = await user.comparePassword(credentials!.password);
+        console.log("Password valid:", valid); // Debugging line
         if (!valid) return null
 
         return {
           id: user.id.toString(),
-          name: user.name,
+          name: user.full_name,
           email: user.email,
-          role: user.role,
-          isValid: user.isValid,
         }
       },
     }),
@@ -46,7 +43,7 @@ export const authOptions: AuthOptions = {
     maxAge: 24 * 60 * 60,
   },
   callbacks: {
-    async jwt({ token, account, user, trigger, session }) {
+    async jwt({ token, account, user}) {
       if (account?.provider === "google") {
         token.accessToken = account.access_token
       }
@@ -54,23 +51,7 @@ export const authOptions: AuthOptions = {
         token.id = user.id
         token.name = user.name
         token.email = user.email
-        token.role = user.role
-        token.isValid = user.isValid
-      } else if (trigger === "update" && session?.user) {
-        if (session.user.isValid !== undefined) {
-          token.isValid = session.user.isValid
-        }
-      } else if (token.email && (token.isValid === undefined || token.id === undefined)) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email as string },
-          select: { id: true, isValid: true, name: true },
-        })
-        if (dbUser) {
-          token.id = dbUser.id.toString()
-          token.isValid = dbUser.isValid
-          token.name = dbUser.name
-        }
-      }
+      } 
       return token
     },
     async session({ session, token }) {
@@ -78,35 +59,37 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string
         session.user.name = token.name as string
         session.user.email = token.email as string
-        session.user.role = token.role as string
-        session.user.isValid = token.isValid as boolean
       }
       return session
     },
     async signIn({ user, account }) {
       if (account?.provider === "google") {
+        await connectDB()
         try {
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email! },
-          })
-
+          // First try to find by googleId, then by email
+          let existingUser = await Student.findOne({ googleId: account.providerAccountId })
           if (!existingUser) {
-            const newUser = await prisma.user.create({
-              data: {
-                name: user.name!,
+            existingUser = await Student.findOne({ email: user.email! })
+          }
+          
+          if (existingUser) {
+            if (!existingUser.googleId) {
+              existingUser.googleId = account.providerAccountId
+              await existingUser.save()
+            }
+            user.id = existingUser.id.toString()
+          } else {
+            // Create new user
+            const newUser = await Student.create({
+                googleId: account.providerAccountId,
+                full_name: user.name!,
                 email: user.email!,
-                password: "", // google user -> empty
-                isValid: false, // mặc định false
-              } as userData,
-            })
+                avatar: user.image,
+                password: account.providerAccountId, // google user -> use providerAccountId as password
+                rank_now: 0, // Set default rank
+            });
 
             user.id = newUser.id.toString()
-            user.isValid = false
-            user.role = newUser.role
-          } else {
-            user.id = existingUser.id.toString()
-            user.isValid = existingUser.isValid
-            user.role = existingUser.role
           }
           return true
         } catch (error) {
