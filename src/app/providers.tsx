@@ -9,17 +9,25 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const currentPath = usePathname();
   
-  useEffect(() => {
-    if (status === 'loading') return
-    
-    const publicPaths = ["/login", "/register"];
-    const isPublicPath = publicPaths.includes(currentPath);
-    
-    // Nếu chưa đăng nhập và không phải trang công khai, chuyển đến login
-    if (!session?.user && !isPublicPath) {
-      router.push('/login')
-    }
-  }, [session, status, router, currentPath])
+useEffect(() => {
+  if (status === 'loading') return;
+  
+  const publicPaths = ["/login", "/register"];
+  const isPublicPath = publicPaths.includes(currentPath);
+  const isAdminPath = currentPath.startsWith("/admin");
+
+  // Nếu chưa đăng nhập và không phải trang công khai, chuyển đến login
+  if (!session?.user && !isPublicPath && !isAdminPath) {
+    router.push("/login");
+    return;
+  }
+
+  // Nếu đang vào admin mà không phải admin
+  if (isAdminPath && session?.user?.role !== "ADMIN") {
+    router.push("/");
+    return;
+  }
+}, [session, status, router, currentPath]);
 
   // Hiển thị loading khi đang kiểm tra session
   if (status === 'loading') {

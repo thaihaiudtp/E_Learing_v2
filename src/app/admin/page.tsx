@@ -17,7 +17,8 @@ import {
   Clock,
   BarChart3,
   UserCheck,
-  Settings
+  Settings,
+  Play
 } from 'lucide-react'
 
 const stats = [

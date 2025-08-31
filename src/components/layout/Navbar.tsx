@@ -45,7 +45,7 @@ export function Navbar() {
 
   const adminNavItems = [
     { href: '/admin', label: 'Dashboard', icon: BarChart3 },
-    { href: '/admin/courses', label: 'Courses', icon: BookOpen },
+    { href: '/admin/courses/list', label: 'Courses', icon: BookOpen },
     { href: '/admin/students', label: 'Students', icon: Users },
     { href: '/admin/teachers', label: 'Teachers', icon: UserCog },
   ]

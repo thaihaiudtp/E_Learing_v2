@@ -58,7 +58,19 @@ function LoginForm() {
     }
     setIsLoading(false)
   }
-
+  const handleGoogleLogin = async () => {
+  const result = await signIn("google", { redirect: false });
+  
+  if (result?.ok) {
+    // Lấy session sau khi login
+    const {data: session} = useSession();
+    if (session?.user.role === "admin") {
+      window.location.href = "/admin/dashboard";
+    } else {
+      window.location.href = "/student/dashboard";
+    }
+  }
+};
   return (
     <Card>
       <CardHeader>
@@ -186,7 +198,7 @@ function LoginForm() {
             <div className="mt-6">
               <button
                 type="button"
-                onClick={() => signIn('google', { callbackUrl: '/student/dashboard' })}
+                onClick={handleGoogleLogin}
                 className="w-full flex justify-center items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <svg

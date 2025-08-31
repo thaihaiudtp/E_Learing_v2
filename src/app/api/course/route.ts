@@ -4,6 +4,8 @@ import { Course } from "@/model/courses"
 import connectDB from "@/lib/db"
 import { ResponseDTO } from "@/dto/ResponseDTO";
 import { CourseRequest } from "@/dto/course/CourseRequset";
+import { FilterQuery } from "mongoose";
+import { ICourse } from "@/model/courses";
 import { withAuth, withAuthAdmin } from "@/lib/with-auth";
 export const GET = withAuth(async (req: NextRequest) => {
   await connectDB()
@@ -11,10 +13,24 @@ export const GET = withAuth(async (req: NextRequest) => {
     const {searchParams} = new URL(req.url);
     const current = parseInt(searchParams.get('current') || "1", 10);
     const page_size = parseInt(searchParams.get('page_size') || "10", 10);
+    const search = searchParams.get("search") || ""; // <-- thêm search
+    const category = searchParams.get("category") || ""; // filter theo category
+    const teacher = searchParams.get("teacher") || ""; // filter theo teacher
     const skip = (current - 1) * page_size;
+    const filter: FilterQuery<ICourse> = {};
+    if (search) {
+      filter.title = { $regex: search, $options: "i" };
+    }
+    if (category) {
+      filter.category = category; // giả sử category là ObjectId (string)
+    }
+    if (teacher) {
+      filter.teacher = teacher; // giả sử teacher là ObjectId (string)
+    }
+
     const [courses, total] = await Promise.all([
-      Course.find().skip(skip).limit(page_size),
-      Course.countDocuments()
+      Course.find(filter).skip(skip).limit(page_size),
+      Course.countDocuments(filter)
     ])
     const response: ResponseDTO = {
       status: 200,

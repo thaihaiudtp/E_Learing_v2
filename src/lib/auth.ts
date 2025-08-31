@@ -63,6 +63,7 @@ export const authOptions: AuthOptions = {
         session.user.email = token.email as string
         session.user.role = token.role as string
       }
+      console.log("Session callback - after assign:", session)
       return session
     },
     async signIn({ user, account }) {
@@ -81,6 +82,7 @@ export const authOptions: AuthOptions = {
               await existingUser.save()
             }
             user.id = existingUser.id.toString()
+            user.role = existingUser.role;
           } else {
             // Create new user
             const newUser = await Student.create({
@@ -93,6 +95,7 @@ export const authOptions: AuthOptions = {
             });
 
             user.id = newUser.id.toString()
+            user.role = newUser.role;
           }
           return true
         } catch (error) {

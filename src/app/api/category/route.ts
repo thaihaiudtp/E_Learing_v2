@@ -1,49 +1,46 @@
 // src/app/api/course/route.ts
-import { NextResponse, NextRequest} from "next/server"
+import { NextRequest, NextResponse } from "next/server"
+import { Category } from "@/model/category";
 import connectDB from "@/lib/db"
-import { Teacher, ITeacher} from "@/model/teacher"
-import { ResponseDTO } from "@/dto/ResponseDTO"
-import { FilterQuery } from "mongoose"
-import { TeacherRequest } from "@/dto/teacher/TeacherRequest"
-export async function GET(req: NextRequest) {
+import { ResponseDTO } from "@/dto/ResponseDTO";
+import { withAuth, withAuthAdmin } from "@/lib/with-auth";
+import { CategoryRequest } from "@/dto/category/CategoryRequest";
+import { Course } from "@/model/courses";
+export const GET = async (req: NextRequest) => {
   await connectDB()
   try {
     const {searchParams} = new URL(req.url);
     const current = parseInt(searchParams.get('current') || "1", 10);
     const page_size = parseInt(searchParams.get('page_size') || "10", 10);
-    const search = searchParams.get("search") || ""; // <-- thêm search
-    const filter: FilterQuery<ITeacher> = search
-      ? { name: { $regex: search, $options: "i" } }
-      : {};
     const skip = (current - 1) * page_size;
-    const [teacher, total] = await Promise.all([
-      Teacher.find(filter).skip(skip).limit(page_size),
-      Teacher.countDocuments(filter)
+    const [category, total] = await Promise.all([
+      Category.find().skip(skip).limit(page_size),
+      Category.countDocuments()
     ])
     const response: ResponseDTO = {
       status: 200,
-      data: teacher,
+      data: category,
       meta: {
         current,
         total,
         page_size
       },
-      message: 'Teachers retrieved successfully'
+      message: 'Courses retrieved successfully'
     }
     return NextResponse.json(response)
   } catch (error) {
     const response: ResponseDTO = {
       status: 500,
       data: null,
-      message: 'Failed to retrieve teachers'
+      message: 'Failed to retrieve courses'
     }
     return NextResponse.json(response)
   }
-}
+};
 
-export async function POST(req: Request) {
-  const body: TeacherRequest = await req.json()
-  if(!body.full_name || !body.email) {
+export const POST = async (req: Request) => {
+  const body: CategoryRequest = await req.json();
+  if(!body.title) {
     const response: ResponseDTO = {
       status: 400,
       data: null,
@@ -53,18 +50,18 @@ export async function POST(req: Request) {
   }
   await connectDB();
   try {
-    const teacher = await Teacher.create(body);
+    const category = await Category.create(body);
     const response: ResponseDTO = {
       status: 201,
-      data: teacher,
-      message: 'Teacher created successfully'
+      data: category,
+      message: 'Category created successfully'
     }
     return NextResponse.json(response)
   } catch (error) {
     const response: ResponseDTO = {
       status: 500,
       data: null,
-      message: 'Failed to create teacher'
+      message: 'Failed to create course'
     }
     return NextResponse.json(response)
   }
