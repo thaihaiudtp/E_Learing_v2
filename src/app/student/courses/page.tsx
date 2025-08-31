@@ -226,7 +226,7 @@ export default function CoursesPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span>By {typeof course.teacher === 'object' ? course.teacher.full_name : course.teacher}</span>
+                    {/* <span>By {typeof course.teacher === 'object' ? course?.teacher?.full_name : course.teacher}</span> */}
                     <div className="flex items-center space-x-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       {/* {course.rating ?? 0} */}
@@ -276,7 +276,7 @@ export default function CoursesPage() {
                       </div>
                       <div className="text-right">
                         <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">${course.price ?? 0}</span>
-                        <div className="mt-2 text-sm text-gray-500">By {typeof course.teacher === 'object' ? course.teacher.full_name : course.teacher}</div>
+                        {/* <div className="mt-2 text-sm text-gray-500">By {typeof course.teacher === 'object' ? course.teacher.full_name : course.teacher}</div> */}
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-600">
