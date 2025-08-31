@@ -17,7 +17,6 @@ function LoginForm() {
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [loginType, setLoginType] = useState<'student' | 'admin'>('student')
-
   const router = useRouter()
   const searchParams = useSearchParams()
   const { data: session, status } = useSession()
@@ -63,7 +62,7 @@ function LoginForm() {
   
   if (result?.ok) {
     // Lấy session sau khi login
-    const {data: session} = useSession();
+
     if (session?.user.role === "admin") {
       window.location.href = "/admin/dashboard";
     } else {

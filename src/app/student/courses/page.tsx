@@ -6,18 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/Button';
 import { Search, Grid, List, Filter, BookOpen, Star, Clock, Users } from 'lucide-react';
 import Image from 'next/image';
+import { Course } from '@/types/course/type';
+import { Category } from '@/types/category/type';
+import { ITeacher } from '@/model/teacher';
 
 export default function CoursesPage() {
   const router = useRouter();
-  const [courses, setCourses] = useState<any[]>([]);
-  const [filteredCourses, setFilteredCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedTeacher, setSelectedTeacher] = useState('All');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('popular');
-  const [categories, setCategories] = useState<{_id: string, title: string}[]>([]);
-  const [teachers, setTeachers] = useState<{_id: string, full_name: string}[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [teachers, setTeachers] = useState<ITeacher[]>([]);
   const [current, setCurrent] = useState(1);
   const [pageSize] = useState(12);
   const [total, setTotal] = useState(0);
@@ -29,14 +32,14 @@ export default function CoursesPage() {
         const catRes = await fetch('/api/category?current=1&page_size=100');
         const catData = await catRes.json();
         if (catData.status === 200 && Array.isArray(catData.data)) {
-          setCategories(catData.data);
+          setCategories(catData.data as Category[]);
         }
       } catch {}
       try {
         const teacherRes = await fetch('/api/teacher?current=1&page_size=100');
         const teacherData = await teacherRes.json();
         if (teacherData.status === 200 && Array.isArray(teacherData.data)) {
-          setTeachers(teacherData.data);
+          setTeachers(teacherData.data as ITeacher[]);
         }
       } catch {}
     }
@@ -46,7 +49,7 @@ export default function CoursesPage() {
   useEffect(() => {
     async function fetchCourses() {
       setLoading(true);
-      let params = new URLSearchParams({
+      const params = new URLSearchParams({
         current: current.toString(),
         page_size: pageSize.toString(),
       });
@@ -56,7 +59,7 @@ export default function CoursesPage() {
       const res = await fetch(`/api/course?${params.toString()}`);
       const data = await res.json();
       if (data.status === 200) {
-        setCourses(data.data);
+        setCourses(data.data as Course[]);
         setTotal(data.meta?.total || 0);
       }
       setLoading(false);
@@ -65,7 +68,7 @@ export default function CoursesPage() {
   }, [searchTerm, selectedCategory, selectedTeacher, current, pageSize]);
 
   useEffect(() => {
-    let filtered = [...courses];
+    const filtered = [...courses];
     // Sort courses
     switch (sortBy) {
       case 'popular':
@@ -133,7 +136,7 @@ export default function CoursesPage() {
                   >
                     <option value="All">Tất cả giáo viên</option>
                     {teachers.map(teacher => (
-                      <option key={teacher._id} value={teacher._id}>{teacher.full_name}</option>
+                      <option key={teacher._id as string} value={teacher._id as string}>{teacher.full_name}</option>
                     ))}
                   </select>
                   {/* Sort Filter */}
@@ -223,7 +226,7 @@ export default function CoursesPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span>By {course.teacher}</span>
+                    <span>By {typeof course.teacher === 'object' ? course.teacher.full_name : course.teacher}</span>
                     <div className="flex items-center space-x-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       {/* {course.rating ?? 0} */}
@@ -273,7 +276,7 @@ export default function CoursesPage() {
                       </div>
                       <div className="text-right">
                         <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">${course.price ?? 0}</span>
-                        <div className="mt-2 text-sm text-gray-500">By {course.teacher}</div>
+                        <div className="mt-2 text-sm text-gray-500">By {typeof course.teacher === 'object' ? course.teacher.full_name : course.teacher}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-600">

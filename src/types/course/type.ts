@@ -10,8 +10,9 @@ export interface Course{
   language?: string;
   requirements?: string[];
   features?: string[];
-  category: string;
-  teacher: string;
-  students: string[];
-  lessons: string[];
+  category: string | any; // populated object
+  teacher: string | any; // populated object
+  students: string[] | any[]; // populated objects
+  lessons: string[] | any[]; // populated objects
+  rating?: number;
 }
