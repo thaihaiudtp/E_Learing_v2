@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
-import { GraduationCap, Eye, EyeOff } from 'lucide-react'
+import { GraduationCap, Eye, EyeOff, User, Shield } from 'lucide-react'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -16,6 +16,7 @@ function LoginForm() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [loginType, setLoginType] = useState<'student' | 'admin'>('student')
 
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -24,7 +25,11 @@ function LoginForm() {
   useEffect(() => {
     if (status === 'authenticated') {
       console.log(session);
-      router.push('/student/dashboard')
+      if (session.user.role === 'ADMIN') {
+        router.push('/admin')
+      } else {
+        router.push('/student/dashboard')
+      }
     }
   }, [status, router, session])
 
@@ -49,7 +54,7 @@ function LoginForm() {
     if (result?.error) {
       setError('Invalid credentials')
     } else {
-      router.push('/student/dashboard')
+      // Redirect will be handled by useEffect based on user role
     }
     setIsLoading(false)
   }
@@ -59,7 +64,7 @@ function LoginForm() {
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
         <CardDescription>
-          Enter your credentials to access your account
+          Choose your account type and enter your credentials
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -68,6 +73,39 @@ function LoginForm() {
             <p className="text-green-600 text-sm">{message}</p>
           </div>
         )}
+
+        {/* Login Type Selection */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Login as
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setLoginType('student')}
+              className={`flex items-center justify-center space-x-2 p-3 border rounded-lg transition-all ${
+                loginType === 'student'
+                  ? 'border-blue-500 bg-blue-50 text-blue-700'
+                  : 'border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <User className="h-5 w-5" />
+              <span className="font-medium">Student</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setLoginType('admin')}
+              className={`flex items-center justify-center space-x-2 p-3 border rounded-lg transition-all ${
+                loginType === 'admin'
+                  ? 'border-purple-500 bg-purple-50 text-purple-700'
+                  : 'border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <Shield className="h-5 w-5" />
+              <span className="font-medium">Admin</span>
+            </button>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email input */}
@@ -116,62 +154,68 @@ function LoginForm() {
             </div>
           )}
 
-          <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+          <Button 
+            type="submit" 
+            className={`w-full ${loginType === 'admin' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+            size="lg" 
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 Signing In...
               </>
             ) : (
-              'Sign In'
+              `Sign In as ${loginType === 'student' ? 'Student' : 'Admin'}`
             )}
           </Button>
         </form>
 
-        {/* Social login */}
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
+        {/* Social login - only for students */}
+        {loginType === 'student' && (
           <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => signIn('google', { callbackUrl: '/student/dashboard' })}
-              className="w-full flex justify-center items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 48 48"
-              >
-                <path
-                  fill="#EA4335"
-                  d="M24 9.5c3.94 0 6.6 1.7 8.1 3.1l5.9-5.9C34.9 3.6 29.9 1.5 24 1.5 14.7 1.5 7 8.2 7 17.5c0 2.7.7 5.3 2 7.5l6.5-5c-1.1-3.3 1.3-6.5 4.5-7.5 1.3-.4 2.7-.5 4-.5z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M46.1 24.5c0-1.5-.1-2.6-.3-3.8H24v7.1h12.6c-.6 3.3-2.5 6.1-5.3 8l6.5 5c3.8-3.6 6-8.8 6-16.3z"
-                />
-                <path
-                  fill="#4A90E2"
-                  d="M24 46c6.5 0 11.9-2.1 15.8-5.6l-6.5-5c-2.2 1.5-5 2.5-9.3 2.5-7.1 0-13.1-4.8-15.2-11.3l-6.6 5.1C6.7 40.2 14.6 46 24 46z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M8.7 28.2C8.2 26.8 8 25.2 8 23.5s.2-3.3.7-4.7l-6.6-5.1C.7 17.2 0 20.2 0 23.5c0 3.3.7 6.3 2.1 9.2l6.6-4.5z"
-                />
-              </svg>
-              Google
-            </button>
-          </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
 
-        </div>
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={() => signIn('google', { callbackUrl: '/student/dashboard' })}
+                className="w-full flex justify-center items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <svg
+                  className="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 48 48"
+                >
+                  <path
+                    fill="#EA4335"
+                    d="M24 9.5c3.94 0 6.6 1.7 8.1 3.1l5.9-5.9C34.9 3.6 29.9 1.5 24 1.5 14.7 1.5 7 8.2 7 17.5c0 2.7.7 5.3 2 7.5l6.5-5c-1.1-3.3 1.3-6.5 4.5-7.5 1.3-.4 2.7-.5 4-.5z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M46.1 24.5c0-1.5-.1-2.6-.3-3.8H24v7.1h12.6c-.6 3.3-2.5 6.1-5.3 8l6.5 5c3.8-3.6 6-8.8 6-16.3z"
+                  />
+                  <path
+                    fill="#4A90E2"
+                    d="M24 46c6.5 0 11.9-2.1 15.8-5.6l-6.5-5c-2.2 1.5-5 2.5-9.3 2.5-7.1 0-13.1-4.8-15.2-11.3l-6.6 5.1C6.7 40.2 14.6 46 24 46z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M8.7 28.2C8.2 26.8 8 25.2 8 23.5s.2-3.3.7-4.7l-6.6-5.1C.7 17.2 0 20.2 0 23.5c0 3.3.7 6.3 2.1 9.2l6.6-4.5z"
+                  />
+                </svg>
+                Google
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">

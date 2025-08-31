@@ -40,9 +40,21 @@ export function Navbar() {
   const studentNavItems = [
     { href: '/student/dashboard', label: 'Dashboard', icon: BarChart3 },
     { href: '/student/my-courses', label: 'My Courses', icon: BookOpen },
+    { href: '/student/courses', label: 'All Courses', icon: Users },
   ]
 
-  const navItems = session?.user ? studentNavItems : []
+  const adminNavItems = [
+    { href: '/admin', label: 'Dashboard', icon: BarChart3 },
+    { href: '/admin/courses', label: 'Courses', icon: BookOpen },
+    { href: '/admin/students', label: 'Students', icon: Users },
+    { href: '/admin/teachers', label: 'Teachers', icon: UserCog },
+  ]
+
+  const navItems = session?.user 
+    ? session.user.role === 'ADMIN' 
+      ? adminNavItems 
+      : studentNavItems 
+    : []
 
   const avatarMenuItems = [
     { href: '/setting', label: 'Account Settings', icon: User },
