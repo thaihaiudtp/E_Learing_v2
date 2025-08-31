@@ -7,6 +7,10 @@ export interface IQuizAttempt {
   scores: number[];      // điểm của từng lần
   bestScore: number;     // điểm cao nhất
 }
+export enum Role {
+  STUDENT = 'STUDENT',
+  ADMIN = 'ADMIN',
+}
 
 export interface IStudent extends Document {
   googleId?: string;
@@ -15,6 +19,7 @@ export interface IStudent extends Document {
   password: string;
   avatar?: string;
   age?: number;
+  role: Role;
   courses_enrolled?: mongoose.Types.ObjectId[];
   rank_now?: number;
   quizProgress?: IQuizAttempt[];
@@ -42,6 +47,7 @@ const StudentSchema = new Schema<IStudent>(
     courses_enrolled: [
       { type: Schema.Types.ObjectId, ref: 'Course' }
     ],
+    role: { type: String, enum: Object.values(Role), default: Role.STUDENT },
     rank_now: { type: Number, default: 0 },
     quizProgress: [QuizAttemptSchema],
   },

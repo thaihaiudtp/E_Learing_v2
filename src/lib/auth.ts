@@ -30,6 +30,7 @@ export const authOptions: AuthOptions = {
           id: user.id.toString(),
           name: user.full_name,
           email: user.email,
+          role: user.role
         }
       },
     }),
@@ -51,6 +52,7 @@ export const authOptions: AuthOptions = {
         token.id = user.id
         token.name = user.name
         token.email = user.email
+        token.role = user.role
       } 
       return token
     },
@@ -59,6 +61,7 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string
         session.user.name = token.name as string
         session.user.email = token.email as string
+        session.user.role = token.role as string
       }
       return session
     },

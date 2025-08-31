@@ -6,14 +6,13 @@ export enum CourseLevel {
 export interface CourseRequest {
   title: string
   description: string
-  teacherId: number
-  categoryId: number
-  slug?: string
+  category: string
   price?: number
   level?: CourseLevel
   thumbnail?: string
   duration?: string
   language?: string
+  teacher: string
   requirements?: string[]
   features?: string[]
 }
