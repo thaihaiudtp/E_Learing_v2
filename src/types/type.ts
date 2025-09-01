@@ -7,3 +7,12 @@ export interface Error {
     message: string,
     code: number
 }
+
+export interface Session {
+    user: {
+      id: string
+      name: string
+      email: string
+      role: string
+    } 
+}

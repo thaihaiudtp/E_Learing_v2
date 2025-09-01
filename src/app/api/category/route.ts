@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server"
 import { Category } from "@/model/category";
 import connectDB from "@/lib/db"
 import { ResponseDTO } from "@/dto/ResponseDTO";
-import { withAuth, withAuthAdmin } from "@/lib/with-auth";
+import { checkSession } from "@/lib/check-session";
 import { CategoryRequest } from "@/dto/category/CategoryRequest";
 import { Course } from "@/model/courses";
+
 export const GET = async (req: NextRequest) => {
   await connectDB()
   try {
@@ -39,6 +40,15 @@ export const GET = async (req: NextRequest) => {
 };
 
 export const POST = async (req: Request) => {
+  const session = await checkSession();
+  if(!session || session?.user.role !== 'ADMIN') {
+    const response: ResponseDTO = {
+      status: 401,
+      data: null,
+      message: 'Unauthorized'
+    }
+    return NextResponse.json(response)
+  }
   const body: CategoryRequest = await req.json();
   if(!body.title) {
     const response: ResponseDTO = {

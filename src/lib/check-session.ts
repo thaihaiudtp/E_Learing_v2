@@ -1,10 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
-export async function checkSession() {
+
+export const checkSession = async() => {
   const session = await getServerSession(authOptions);
-  if (session) {
-    return session;
-  } else {
-    throw new Error("Unauthorized");
-  }
+  return session;
 }

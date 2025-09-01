@@ -3,6 +3,7 @@ import { Course } from "@/model/courses";
 import { LessonRequest } from "@/types/lesson/type";
 import { ResponseDTO } from "@/dto/ResponseDTO";
 import connectDB from "@/lib/db";
+import { checkSession } from "@/lib/check-session";
 export async function GET() {
     await connectDB();
     try {
@@ -28,6 +29,15 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+    const session = await checkSession();
+    if(!session || session?.user.role !== 'ADMIN') {
+        const response: ResponseDTO = {
+            status: 401,
+            data: null,
+            message: 'Unauthorized'
+        }
+        return new Response(JSON.stringify(response), { status: 401 });
+    }
     await connectDB();
     try {
         const body: LessonRequest = await request.json();

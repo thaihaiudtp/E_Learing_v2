@@ -5,6 +5,7 @@ import { Teacher, ITeacher} from "@/model/teacher"
 import { ResponseDTO } from "@/dto/ResponseDTO"
 import { FilterQuery } from "mongoose"
 import { TeacherRequest } from "@/dto/teacher/TeacherRequest"
+import { checkSession } from "@/lib/check-session"
 export async function GET(req: NextRequest) {
   await connectDB()
   try {
@@ -42,6 +43,15 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: Request) {
+  const session = await checkSession();
+  if(!session || session?.user.role !== 'ADMIN') {
+    const response: ResponseDTO = {
+      status: 401,
+      data: null,
+      message: 'Unauthorized'
+    }
+    return NextResponse.json(response)
+  }
   const body: TeacherRequest = await req.json()
   if(!body.full_name || !body.email) {
     const response: ResponseDTO = {

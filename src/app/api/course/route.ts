@@ -6,8 +6,8 @@ import { ResponseDTO } from "@/dto/ResponseDTO";
 import { CourseRequest } from "@/dto/course/CourseRequset";
 import { FilterQuery } from "mongoose";
 import { ICourse } from "@/model/courses";
-import { withAuth, withAuthAdmin } from "@/lib/with-auth";
-export const GET = withAuth(async (req: NextRequest) => {
+import { checkSession } from "@/lib/check-session";
+export const GET = async (req: NextRequest) => {
   await connectDB()
   try {
     const {searchParams} = new URL(req.url);
@@ -51,9 +51,18 @@ export const GET = withAuth(async (req: NextRequest) => {
     }
     return NextResponse.json(response)
   }
-});
+}
 
-export const POST = withAuthAdmin(async (req: Request) => {
+export const POST = async (req: Request) => {
+  const session = await checkSession();
+  if(!session || session?.user.role !== 'ADMIN') {
+    const response: ResponseDTO = {
+      status: 401,
+      data: null,
+      message: 'Unauthorized'
+    }
+    return NextResponse.json(response)
+  }
   const body: CourseRequest = await req.json();
   if(!body.title || !body.description || !body.category || !body.teacher) {
     const response: ResponseDTO = {
@@ -80,4 +89,4 @@ export const POST = withAuthAdmin(async (req: Request) => {
     }
     return NextResponse.json(response)
   }
-})
+}

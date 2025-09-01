@@ -4,9 +4,18 @@ import connectDB from "@/lib/db";
 import { Quiz } from "@/model/quiz";
 import { IQuiz } from "@/types/quiz/type";
 import { ResponseDTO } from "@/dto/ResponseDTO";
-
+import { checkSession } from "@/lib/check-session";
 // Create quiz
 export const POST = async (req: NextRequest) => {
+  const session = await checkSession();
+  if(!session || session?.user.role !== 'ADMIN') {
+    const response: ResponseDTO = {
+      status: 401,
+      data: null,
+      message: 'Unauthorized'
+    }
+    return NextResponse.json(response)
+  }
   await connectDB();
   try {
     const body: IQuiz = await req.json();
@@ -29,7 +38,6 @@ export const POST = async (req: NextRequest) => {
   }
 };
 
-// Get all quiz
 export const GET = async () => {
   await connectDB();
   try {
