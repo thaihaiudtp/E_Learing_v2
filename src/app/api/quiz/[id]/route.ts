@@ -5,11 +5,12 @@ import { ResponseDTO } from "@/dto/ResponseDTO";
 
 export const GET = async (
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
   await connectDB();
   try {
-    const quiz = await Quiz.findById(params.id);
+    const id = (await params).id;
+    const quiz = await Quiz.findById(id);
 
     if (!quiz) {
       const response: ResponseDTO = {
@@ -38,13 +39,14 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
   await connectDB();
   try {
+    const id = (await params).id;
     const body = await req.json();
 
-    const updatedQuiz = await Quiz.findByIdAndUpdate(params.id, body, {
+    const updatedQuiz = await Quiz.findByIdAndUpdate(id, body, {
       new: true,
     });
 
@@ -75,11 +77,12 @@ export const PUT = async (
 
 export const DELETE = async (
   req: NextRequest,
-  { params }: { params: { id: string } }
+ { params }: { params: Promise<{ id: string }> }
 ) => {
   await connectDB();
   try {
-    const deletedQuiz = await Quiz.findByIdAndDelete(params.id);
+    const id = (await params).id;
+    const deletedQuiz = await Quiz.findByIdAndDelete(id);
 
     if (!deletedQuiz) {
       const response: ResponseDTO = {
