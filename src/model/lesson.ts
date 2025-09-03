@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ILesson extends Document {
   title: string;
+  description?: string;   // mô tả bài học
   videoUrl: string;       // link video bài giảng
   fileUrl: string;        // tài liệu (PDF, DOCX, PPTX…)
   duration?: string;      // thời lượng video
@@ -12,6 +13,7 @@ const LessonSchema = new Schema<ILesson>(
   {
     course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
     title: { type: String, required: true },
+    description: { type: String },
     videoUrl: { type: String, required: true },
     fileUrl: { type: String, required: true },
     duration: { type: String },

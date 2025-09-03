@@ -21,7 +21,8 @@ import {
   Star,
   CheckCircle,
   Video,
-  Download
+  Download,
+  Plus
 } from 'lucide-react';
 import Link from "next/link";
 import Image from 'next/image';
@@ -56,6 +57,29 @@ export default function CourseDetailPage() {
 
     fetchCourseDetail();
   }, [params.id]);
+
+  const handleDeleteLesson = async (lessonId: string) => {
+    if (!confirm("Bạn có chắc muốn xóa bài học này?")) return;
+
+    try {
+      const res = await fetch(`/api/lesson/${lessonId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+
+      if (data.status === 200) {
+        // Refresh course data
+        setCourse(prev => prev ? {
+          ...prev,
+          lessons: prev.lessons?.filter(l => l._id !== lessonId) || []
+        } : null);
+      } else {
+        alert(data.message || "Xóa bài học thất bại");
+      }
+    } catch {
+      alert("Lỗi kết nối server");
+    }
+  };
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -256,10 +280,18 @@ export default function CourseDetailPage() {
               {/* Lessons */}
               <Card className="bg-white shadow-sm border-0">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Play className="h-5 w-5 text-blue-600" />
-                    <span>Nội dung khoá học ({course.lessons?.length || 0} bài học)</span>
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center space-x-2">
+                      <Play className="h-5 w-5 text-blue-600" />
+                      <span>Nội dung khoá học ({course.lessons?.length || 0} bài học)</span>
+                    </CardTitle>
+                    <Link href={`/admin/courses/list/${course._id}/lesson/create`}>
+                      <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Thêm bài học
+                      </Button>
+                    </Link>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {course.lessons && course.lessons.length > 0 ? (
@@ -290,6 +322,24 @@ export default function CourseDetailPage() {
                                   </span>
                                 </div>
                               )}
+                              <div className="flex space-x-2 mt-3">
+                                <Link href={`/admin/courses/list/${course._id}/lesson/${lesson._id}`}>
+                                  <Button size="sm" variant="outline">
+                                    <FileText className="h-4 w-4 mr-1" />
+                                    Chi tiết
+                                  </Button>
+                                </Link>
+                                <Link href={`/admin/courses/list/${course._id}/lesson/${lesson._id}/edit`}>
+                                  <Button size="sm" variant="outline">
+                                    <Edit className="h-4 w-4 mr-1" />
+                                    Sửa
+                                  </Button>
+                                </Link>
+                                <Button size="sm" variant="outline" onClick={() => handleDeleteLesson(lesson._id)}>
+                                  <Trash2 className="h-4 w-4 mr-1" />
+                                  Xóa
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </div>
